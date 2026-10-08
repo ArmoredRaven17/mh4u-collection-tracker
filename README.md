@@ -3,6 +3,8 @@
 A web app for tracking your **Monster Hunter 4 Ultimate** equipment collection — every weapon and
 armor piece, with an "owned" checkbox, full stats, crafting recipes and the upgrade tree.
 
+**Live:** https://armoredraven17.github.io/mh4u-collection-tracker/ *(GitHub Pages, served from `docs/`)*
+
 ## Features
 
 - All 14 weapon classes (2,308 weapons), Great Sword to Bow, including Charge Blade and Insect Glaive,
