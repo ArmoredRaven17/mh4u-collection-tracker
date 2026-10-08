@@ -10,7 +10,7 @@
   // Bump whenever docs/data/ is regenerated. The JSON files are fetched at runtime,
   // so without this a browser holding a cached copy runs new code against old data —
   // which fails silently, as wrong numbers rather than an error.
-  const DATA_VERSION = "2";
+  const DATA_VERSION = "3";
   const APP_TITLE = "MH4U Collection Tracker";
   const SAVE_APP = "mh4u-collection-tracker";
   const SAVE_VERSION = 1;
@@ -26,6 +26,11 @@
   const SHARP_LABELS = C.labels.sharp;
   const SHARP_MAX = 400;               // the game's full bar: every profile ends at 400 (0xf581e4)
   const RES_NAMES = C.labels.res;   // the record's order, Fire Water Ice Thunder Dragon (Menu 402-406)
+  // Element / status colours: the palette the MHGU apps use (MHGU Challenge Run), keyed by the game's names.
+  const ELEMENT_COLORS = {
+    Fire: "#ff8a5c", Water: "#6cb8ff", Thunder: "#ffd85c", Ice: "#9adcff", Dragon: "#b48aff",
+    Poison: "#c6a3ce", Paralysis: "#f8cf63", Sleep: "#9cdef8", Blast: "#b5d772",
+  };
   const RARITY_COLORS = C.rarityColors;   // the game's Rare 1-10 name colours (0xe063f6)
 
   // Theme palette: the same 31 hexes as the MHGU and MH3U families (each one clears the
@@ -1304,13 +1309,25 @@
   function renderWeaponDetail(c, data, id) {
     const s = data.byId[String(id)];
     if (!s) return '<div class="detail-note">No detailed stats for this weapon.</div>';
-    let h = row("Attack", s.atk)
+    // The game stores true raw and shows it times the class factor (0xed24a0): Displayed Value = True Raw x factor.
+    let h = row("Displayed Value", s.atk)
+      + (s.raw != null ? row("True Raw", s.raw) : "")
       + (s.aff ? row("Affinity", (s.aff > 0 ? "+" : "") + s.aff + "%") : row("Affinity", "0%"));
     // The game parenthesises an element that needs Awaken until the skill is active; so does this.
-    if (s.ele) h += `<div class="stat-row"><span class="k">Element</span><span class="v">${s.ele.length
-      ? s.ele.map(e => e[2] && !settings.awaken
-          ? `<span class="ele-awk" title="Needs the Awaken skill">(${escapeHtml(e[0])} ${e[1]})</span>`
-          : `${escapeHtml(e[0])} ${e[1]}`).join(" / ") : "—"}</span></div>`;
+    // Element works like attack: the record stores the true value (a signed byte) and the game shows
+    // it x10 for every class (0x280180, the x10 at 0x2803b8), so Displayed Element = True Element x 10.
+    // Each element / status in its colour (the family's palette, as the MHGU Challenge Run uses it).
+    // Anything that needs Awaken is always dimmed; the game's parentheses show only for a hunter
+    // without the skill (the Awaken setting).
+    const eleList = div => s.ele.map(e => {
+      const txt = `${escapeHtml(e[0])} ${div ? e[1] / 10 : e[1]}`;
+      const col = ELEMENT_COLORS[e[0]];
+      const style = col ? ` style="color:${col}"` : "";
+      if (!e[2]) return `<span class="ele"${style}>${txt}</span>`;
+      return `<span class="ele ele-awk"${style} title="Needs the Awaken skill">${settings.awaken ? txt : `(${txt})`}</span>`;
+    }).join(" / ");
+    if (s.ele) h += `<div class="stat-row"><span class="k">Displayed Element</span><span class="v">${s.ele.length ? eleList(false) : "—"}</span></div>`
+      + (s.ele.length ? `<div class="stat-row"><span class="k">True Element</span><span class="v">${eleList(true)}</span></div>` : "");
     if (s.def) h += row("Defense", "+" + s.def);
     h += row("Slots", slotsText(s.slots || 0));
     // Hunting Horn notes: [label, icon, colour] — the game's note glyph in the colour the HUD uses.

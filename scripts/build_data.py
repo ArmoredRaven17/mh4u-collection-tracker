@@ -92,7 +92,8 @@ TYPES = [  # type, key, name table
 ]
 GUNNER = {11, 12, 16}
 MELEE_TABLES, GUNNER_TABLES, COUNTS, CLASS_OF = 0xf5884c, 0xf58884, 0xf3fc38, 0xf5f2fc
-MULT100 = 0xed24a0       # READ 0x26e260: displayed attack = true attack * u32[class] / 100
+MULT100 = 0xed24a0       # READ 0x26e260: displayed attack = true attack * u32[class] / 100 (stats: atk
+                         # is the displayed value, raw the true one the record stores)
 
 # Element / status. Melee: +0xc element code 1-5, +0xd s8 value; +0xe status code 1-4, +0xf s8.
 # Bow: the same pairs at +0x12 / +0x14. READ 0x2f1688 (the stat getter): stats 7-11 are the element
@@ -384,7 +385,7 @@ def weapon_class(t, key, msg, forge):
         st['ele'] = ele
         attack = atk * mult100 // 100
         par = parent.get(i) if parent.get(i) in keep_set else None
-        st.update(rar=rar, atk=attack, aff=aff, slots=slots, price=price, parent=par,
+        st.update(rar=rar, atk=attack, raw=atk, aff=aff, slots=slots, price=price, parent=par,
                   children=[c for c in children.get(i, []) if c in keep_set])
         st['def'] = dfn
         stats[str(i)] = st
