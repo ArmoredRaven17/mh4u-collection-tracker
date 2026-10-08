@@ -1323,8 +1323,10 @@
       const txt = `${escapeHtml(e[0])} ${div ? e[1] / 10 : e[1]}`;
       const col = ELEMENT_COLORS[e[0]];
       const style = col ? ` style="color:${col}"` : "";
-      if (!e[2]) return `<span class="ele"${style}>${txt}</span>`;
-      return `<span class="ele ele-awk"${style} title="Needs the Awaken skill">${settings.awaken ? txt : `(${txt})`}</span>`;
+      const ele = `<span class="ele"${style}>${txt}</span>`;
+      if (!e[2]) return ele;
+      // The parentheses stay in the normal text colour; only the element itself is coloured.
+      return `<span class="ele-awk" title="Needs the Awaken skill">${settings.awaken ? ele : `(${ele})`}</span>`;
     }).join(" / ");
     if (s.ele) h += `<div class="stat-row"><span class="k">Displayed Element</span><span class="v">${s.ele.length ? eleList(false) : "—"}</span></div>`
       + (s.ele.length ? `<div class="stat-row stat-sub"><span class="k">True Element</span><span class="v">${eleList(true)}</span></div>` : "");
