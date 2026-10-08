@@ -1311,7 +1311,7 @@
     if (!s) return '<div class="detail-note">No detailed stats for this weapon.</div>';
     // The game stores true raw and shows it times the class factor (0xed24a0): Displayed Value = True Raw x factor.
     let h = row("Displayed Value", s.atk)
-      + (s.raw != null ? row("True Raw", s.raw) : "")
+      + (s.raw != null ? row("True Raw", s.raw).replace('class="stat-row"', 'class="stat-row stat-sub"') : "")
       + (s.aff ? row("Affinity", (s.aff > 0 ? "+" : "") + s.aff + "%") : row("Affinity", "0%"));
     // The game parenthesises an element that needs Awaken until the skill is active; so does this.
     // Element works like attack: the record stores the true value (a signed byte) and the game shows
@@ -1327,7 +1327,7 @@
       return `<span class="ele ele-awk"${style} title="Needs the Awaken skill">${settings.awaken ? txt : `(${txt})`}</span>`;
     }).join(" / ");
     if (s.ele) h += `<div class="stat-row"><span class="k">Displayed Element</span><span class="v">${s.ele.length ? eleList(false) : "—"}</span></div>`
-      + (s.ele.length ? `<div class="stat-row"><span class="k">True Element</span><span class="v">${eleList(true)}</span></div>` : "");
+      + (s.ele.length ? `<div class="stat-row stat-sub"><span class="k">True Element</span><span class="v">${eleList(true)}</span></div>` : "");
     if (s.def) h += row("Defense", "+" + s.def);
     h += row("Slots", slotsText(s.slots || 0));
     // Hunting Horn notes: [label, icon, colour] — the game's note glyph in the colour the HUD uses.

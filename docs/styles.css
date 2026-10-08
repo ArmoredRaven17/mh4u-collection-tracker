@@ -267,6 +267,7 @@ body{
 .stat-row{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:13px;border-bottom:1px solid #ffffff0d}
 .stat-row .k{opacity:.7}
 .stat-row .v{font-variant-numeric:tabular-nums;text-align:right}
+.stat-sub .k{padding-left:14px}
 .skill-list .stat-row .k{opacity:1}
 .skill-list .skill-neg{color:#e8707a}
 .lvl-hint{font-size:11px;opacity:.6;margin:2px 0 6px}
