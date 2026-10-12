@@ -10,7 +10,7 @@
   // Bump whenever docs/data/ is regenerated. The JSON files are fetched at runtime,
   // so without this a browser holding a cached copy runs new code against old data —
   // which fails silently, as wrong numbers rather than an error.
-  const DATA_VERSION = "3";
+  const DATA_VERSION = "4";
   const APP_TITLE = "MH4U Collection Tracker";
   const SAVE_APP = "mh4u-collection-tracker";
   const SAVE_VERSION = 1;

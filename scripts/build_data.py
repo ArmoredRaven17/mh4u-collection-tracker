@@ -111,6 +111,12 @@ SHARP_LABELS = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'White', 'Purple']
 #   Hunting Horn  READ 0x2709e4: three note codes at 0xf31da4 + 3 * special. Songs, READ 0x277ddc:
 #                 75 songs x 4 note codes (0-terminated) at 0xf31e3a; playable when every note is
 #                 among the horn's three; effect = Menu[u32 0xed2858[byte 0xed256a[song]]].
+#                 The table holds each song LAST note first: the play order is the stored order
+#                 reversed (Raven confirmed against the game, 2026-10-12). The list code walks the
+#                 notes from index 3 down (0x277edc) into panes 63..60 of ui034; reading those pane
+#                 ids as left-to-right file order gave the opposite answer, so that mapping is not
+#                 the layout's. Songs go by colour, so horns with the same three notes in another
+#                 slot order (which attack plays which colour) share every song.
 #   Gunlance      READ 0x27a070: shell = Menu[u32 0xed2694[special % 3]], level = special / 3 + 1.
 #   Switch Axe    READ 0x27d45c: phial = Menu[s16 0xed26a0[special]]; Charge Blade the same at 0xed2480.
 #   Insect Glaive READ 0x2f28f8: the Kinsect a new glaive comes with -- 0 -> Kinsect 0, else 12.
@@ -370,7 +376,7 @@ def weapon_class(t, key, msg, forge):
                     seq = [x for x in raw(SONG_NOTES + 4 * k, 4) if x]
                     if seq and all(x in notes for x in seq):
                         eff = MENU[word(SONG_EFFECT_MSG + 4 * CODE[SONG_EFFECT - BASE + k])]
-                        st['songs'].append([[notes.index(x) for x in seq], eff])
+                        st['songs'].append([[notes.index(x) for x in reversed(seq)], eff])
                 cx['n'] = notes[0] << 8 | notes[1] << 4 | notes[2]
             elif t == 15:
                 cx.update(s=sp % 3, sl=sp // 3 + 1)
